@@ -14,6 +14,13 @@ import (
 )
 
 func NewAWSConfig() *aws.Config {
+	if Config.Env == "dev" {
+		return &aws.Config{
+			Credentials: credentials.NewStaticCredentials(Config.AwsAccessKey, Config.AwsSecretKey, ""),
+			Region:      aws.String(Config.AwsRegion),
+			Endpoint:    aws.String(Config.S3Endpoint),
+		}
+	}
 	return &aws.Config{
 		Credentials: credentials.NewStaticCredentials(Config.AwsAccessKey, Config.AwsSecretKey, ""),
 		Region:      aws.String(Config.AwsRegion),

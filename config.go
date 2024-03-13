@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/joho/godotenv"
 )
 
@@ -13,6 +11,7 @@ type EnvVars struct {
 	S3Bucket            string
 	AwsRegion           string
 	PublicAssetEndpoint string
+	Env                 string
 }
 
 func GetConfig() *EnvVars {
@@ -28,8 +27,8 @@ func GetConfig() *EnvVars {
 		S3Bucket:            envFile["S3_BUCKET"],
 		AwsRegion:           envFile["AWS_REGION"],
 		PublicAssetEndpoint: envFile["PUBLIC_ASSET_ENDPOINT"],
+		Env:                 envFile["ENV"],
 	}
-	fmt.Println(config)
 
 	return &config
 }
