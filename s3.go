@@ -57,13 +57,6 @@ func UploadDirToS3(directory string) error {
 				}
 				defer file.Close()
 
-				// Set the S3 object key (use relative path within the bucket)
-
-				if err != nil {
-					errCh <- err
-					return
-				}
-
 				objectKey := strings.Replace(filepath.ToSlash(path), "tmp/", "", 1)
 
 				_, err = svc.PutObject(&s3.PutObjectInput{

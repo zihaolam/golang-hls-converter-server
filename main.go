@@ -3,11 +3,14 @@ package main
 import (
 	"log"
 
+	"runtime"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 func main() {
+	runtime.GOMAXPROCS(10)
 	app := fiber.New(fiber.Config{
 		BodyLimit: 300 * 1024 * 1024, // this is the default limit of 4MB
 	})
