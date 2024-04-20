@@ -1,36 +1,40 @@
-package main
+package internal
 
 import (
 	"github.com/joho/godotenv"
 )
 
-type EnvVars struct {
+type envVars struct {
 	AwsAccessKey        string
 	AwsSecretKey        string
 	S3Endpoint          string
 	S3Bucket            string
 	AwsRegion           string
 	PublicAssetEndpoint string
-	Env                 string
+	AppEnv              string
+	Port                string
+	Host                string
 }
 
-func GetConfig() *EnvVars {
+func newEnvVars() *envVars {
 	envFile, err := godotenv.Read(".env")
 	if err != nil {
 		panic(err)
 	}
 
-	config := EnvVars{
+	config := envVars{
 		AwsAccessKey:        envFile["AWS_ACCESS_KEY"],
 		AwsSecretKey:        envFile["AWS_SECRET_KEY"],
 		S3Endpoint:          envFile["S3_ENDPOINT"],
 		S3Bucket:            envFile["S3_BUCKET"],
 		AwsRegion:           envFile["AWS_REGION"],
 		PublicAssetEndpoint: envFile["PUBLIC_ASSET_ENDPOINT"],
-		Env:                 envFile["ENV"],
+		AppEnv:              envFile["ENV"],
+		Port:                envFile["PORT"],
+		Host:                envFile["HOST"],
 	}
 
 	return &config
 }
 
-var Config = GetConfig()
+var Env = newEnvVars()
