@@ -9,13 +9,13 @@ BINARY_NAME := bin/app
 all: build
 
 build:
-	$(GO) build -o $(bin/app) cmd/app/main.go
+	$(GO) build -o $(BINARY_NAME) cmd/app/main.go
 
 run: build
 	./$(BINARY_NAME)
 
 dev:
-	air --build.cmd "$(GO) build -o bin/app cmd/app/main.go" --build.bin "./bin/app"
+	air --build.cmd "$(GO) build -o $(BINARY_NAME) cmd/app/main.go" --build.bin "$(BINARY_NAME)"
 
 clean:
 	rm -f $(BINARY_NAME)
