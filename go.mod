@@ -23,6 +23,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.2
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/joho/godotenv v1.5.1
+	github.com/sashabaranov/go-openai v1.22.0
 	github.com/spf13/cast v1.6.0
 	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/vansante/go-ffprobe v1.1.0

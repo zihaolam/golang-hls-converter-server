@@ -14,6 +14,7 @@ type envVars struct {
 	AppEnv              string
 	Port                string
 	Host                string
+	OpenAIApiKey        string
 }
 
 func newEnvVars() *envVars {
@@ -32,6 +33,7 @@ func newEnvVars() *envVars {
 		AppEnv:              envFile["ENV"],
 		Port:                envFile["PORT"],
 		Host:                envFile["HOST"],
+		OpenAIApiKey:        envFile["OPENAI_API_KEY"],
 	}
 
 	return &config

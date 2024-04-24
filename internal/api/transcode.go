@@ -13,19 +13,23 @@ import (
 	"github.com/zihaolam/golang-media-upload-server/internal/pkg/mediautils"
 )
 
-type transcodeApi struct{}
+type transcodeApi struct {
+	api *api
+}
 
 func NewTranscodeApi(a *api) *transcodeApi {
-	return &transcodeApi{}
+	return &transcodeApi{
+		api: a,
+	}
 }
 
-func (ta *transcodeApi) RegisterRoutes(a *api) {
-	transcodeApiGroup := a.GetV1Group().Group("/transcode")
-	transcodeApiGroup.Post("/video", getTranscodeVideoHandler())
-	transcodeApiGroup.Post("/image", getTranscodeImageHandler())
+func (ta *transcodeApi) RegisterRoutes() {
+	transcodeApiGroup := ta.api.GetV1Group().Group("/transcode")
+	transcodeApiGroup.Post("/video", ta.getTranscodeVideoHandler())
+	transcodeApiGroup.Post("/image", ta.getTranscodeImageHandler())
 }
 
-func getTranscodeVideoHandler() Handler {
+func (ta *transcodeApi) getTranscodeVideoHandler() Handler {
 	return func(c *fiber.Ctx) error {
 		form, err := c.MultipartForm()
 
@@ -75,7 +79,7 @@ func getTranscodeVideoHandler() Handler {
 	}
 }
 
-func getTranscodeImageHandler() Handler {
+func (ta *transcodeApi) getTranscodeImageHandler() Handler {
 	return func(c *fiber.Ctx) error {
 		form, err := c.MultipartForm()
 

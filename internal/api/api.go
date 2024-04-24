@@ -19,7 +19,7 @@ type Handler = func(c *fiber.Ctx) error
 func NewApi() *api {
 	return &api{
 		app: fiber.New(fiber.Config{
-			BodyLimit: 40 * 1024 * 1024, // this is the default limit of 4MB
+			BodyLimit: 1024 * 1024 * 1024, // this is the default limit of 4MB
 		}),
 	}
 }
@@ -58,7 +58,9 @@ func (a *api) RegisterRoutes() {
 	a.RegisterUtilRoutes()
 
 	transcodeApi := NewTranscodeApi(a)
-	transcodeApi.RegisterRoutes(a)
+	transcribeApi := NewTranscribeApi(a)
+	transcodeApi.RegisterRoutes()
+	transcribeApi.RegisterRoutes()
 }
 
 func (a *api) GetV1Group() fiber.Router {

@@ -1,7 +1,7 @@
 package s3
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sync"
@@ -31,23 +31,24 @@ func newConfig() *aws.Config {
 type S3Client struct {
 	awsCfg *aws.Config
 	bucket string
+	s3     *s3.S3
 }
 
 func NewS3Client() *S3Client {
+	awsCfg := newConfig()
+	sess, err := session.NewSession(awsCfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+	s3 := s3.New(sess)
 	return &S3Client{
+		s3:     s3,
 		awsCfg: newConfig(),
 		bucket: internal.Env.S3Bucket,
 	}
 }
 
 func (sc *S3Client) UploadDirectory(directory string) error {
-	sess, err := session.NewSession(sc.awsCfg)
-
-	if err != nil {
-		return err
-	}
-
-	svc := s3.New(sess)
 	var wg sync.WaitGroup
 	errCh := make(chan error)
 	leafDirPath := filepath.Base(directory)
@@ -58,9 +59,15 @@ func (sc *S3Client) UploadDirectory(directory string) error {
 
 		if !info.IsDir() { // Upload files only, not directories
 			wg.Add(1)
-			go sc.UploadObject(&wg, errCh, svc, path, func(_ string) string {
-				return filepath.Join(leafDirPath, info.Name())
-			})
+			go func(wg *sync.WaitGroup) {
+				defer wg.Done()
+				_, err := sc.UploadObject(path, func(_ string) string {
+					return filepath.Join(leafDirPath, info.Name())
+				})
+				if err != nil {
+					errCh <- err
+				}
+			}(&wg)
 		}
 		return nil
 	})
@@ -88,16 +95,18 @@ func getFileType(path string) string {
 	return ""
 }
 
-func (sc *S3Client) UploadObject(wg *sync.WaitGroup, errCh chan error, svc *s3.S3, path string, transformPathName func(string) string) {
-	defer wg.Done()
+func (sc *S3Client) UploadObject(path string, transformPathName func(string) string) (*string, error) {
 	file, err := os.Open(path)
 	if err != nil {
-		errCh <- err
-		return
+		return nil, err
 	}
 	defer file.Close()
 
-	objectKey := transformPathName(path)
+	objectKey := path
+
+	if transformPathName != nil {
+		objectKey = transformPathName(path)
+	}
 
 	contentType := getFileType(objectKey)
 
@@ -111,12 +120,13 @@ func (sc *S3Client) UploadObject(wg *sync.WaitGroup, errCh chan error, svc *s3.S
 		opts.ContentType = aws.String(contentType)
 	}
 
-	_, err = svc.PutObject(&opts)
+	_, err = sc.s3.PutObject(&opts)
 
 	if err != nil {
-		errCh <- err
-		return
-	} else {
-		fmt.Printf("Uploaded file: %s\n", objectKey)
+		return nil, err
 	}
+
+	log.Printf("Uploaded file: %s\n", objectKey)
+
+	return &objectKey, nil
 }

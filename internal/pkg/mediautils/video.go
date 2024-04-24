@@ -143,7 +143,7 @@ func generateSegmentsForResolutions(resolutions []Resolution, outputDir, outputP
 	}, nil
 }
 
-func ReplaceHLSSegmentsBasePath(directory string, basePath string, prefix string) {
+func replaceHLSSegmentsBasePath(directory string, basePath string, prefix string) {
 	filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -203,8 +203,19 @@ func TranscodeVideoToHLS(videoFilename, tmpDir string) (string, error) {
 	return uploadedDirectory, nil
 }
 
-func UploadTranscodedSegmentsToS3(directory, directoryPrefi, newDirPrefix string) error {
+func UploadTranscodedSegmentsToS3(directory, directoryPrefix, newDirPrefix string) error {
 	s3Client := s3.NewS3Client()
-	ReplaceHLSSegmentsBasePath(directory, directoryPrefi, newDirPrefix)
+	replaceHLSSegmentsBasePath(directory, directoryPrefix, newDirPrefix)
 	return s3Client.UploadDirectory(directory)
+}
+
+func ExtractAudio(videoFileName string) (*string, error) {
+	audioFileName := strings.Replace(videoFileName, ".mp4", ".mp3", 1)
+	err := ffmpeg.Input(videoFileName).Output(audioFileName, ffmpeg.KwArgs{"map": "0:a"}).Run()
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return &audioFileName, nil
 }
