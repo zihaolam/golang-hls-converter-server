@@ -2,6 +2,8 @@ package utils
 
 import (
 	"sync"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func Parallelize[TArg any, TRes any](fn func(arg TArg) (TRes, error), args ...TArg) ([]TRes, []error) {
@@ -60,4 +62,11 @@ func Flatten[T any](nested [][]T) []T {
 	}
 
 	return flattened
+}
+
+var _validator *validator.Validate
+
+func Validate(obj interface{}) error {
+	_validator = validator.New()
+	return _validator.Struct(obj)
 }

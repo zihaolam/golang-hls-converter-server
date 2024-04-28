@@ -1,23 +1,26 @@
 package internal
 
 import (
+	"log"
+
 	"github.com/joho/godotenv"
+	"github.com/zihaolam/golang-media-upload-server/internal/pkg/utils"
 )
 
 type envVars struct {
-	AwsAccessKey           string
-	AwsSecretKey           string
-	S3Endpoint             string
-	S3Bucket               string
-	AwsRegion              string
-	PublicAssetEndpoint    string
-	AppEnv                 string
-	Port                   string
-	Host                   string
-	OpenAIApiKey           string
-	VideoPlatformApiKey    string
-	VideoPlatformServerUrl string
-	SecretKey              string
+	AwsAccessKey           string `validate:"required,min=1"`
+	AwsSecretKey           string `validate:"required,min=1"`
+	S3Endpoint             string `validate:"required,min=1"`
+	S3Bucket               string `validate:"required,min=1"`
+	AwsRegion              string `validate:"required,min=1"`
+	PublicAssetEndpoint    string `validate:"required,min=1"`
+	AppEnv                 string `validate:"required,min=1"`
+	Port                   string `validate:"required,min=1"`
+	Host                   string `validate:"required,min=1"`
+	OpenAIApiKey           string `validate:"required,min=1"`
+	VideoPlatformApiKey    string `validate:"required,min=1"`
+	VideoPlatformServerUrl string `validate:"required,min=1"`
+	SecretKey              string `validate:"required,min=1"`
 }
 
 func newEnvVars() *envVars {
@@ -40,6 +43,10 @@ func newEnvVars() *envVars {
 		VideoPlatformApiKey:    envFile["VIDEO_PLATFORM_API_KEY"],
 		VideoPlatformServerUrl: envFile["VIDEO_PLATFORM_SERVER_URL"],
 		SecretKey:              envFile["SECRET_KEY"],
+	}
+
+	if err := utils.Validate(config); err != nil {
+		log.Fatal(err)
 	}
 
 	return &config
