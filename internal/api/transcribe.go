@@ -27,7 +27,7 @@ func NewTranscribeApi(a *api) *transcribeApi {
 }
 
 func (ta *transcribeApi) Setup() {
-	transcribeApiGroup := ta.api.GetV1Group().Group("/transcribe")
+	transcribeApiGroup := ta.api.NewRouteGroup("/transcribe")
 	transcribeApiGroup.Post("/audio", ta.getTranscribeAudioHandler())
 }
 

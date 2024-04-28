@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/zihaolam/golang-media-upload-server/internal"
+	"github.com/zihaolam/golang-media-upload-server/internal/pkg/middlewares"
 )
 
 type api struct {
@@ -63,8 +64,12 @@ func (a *api) RegisterRoutes() {
 	transcribeApi.Setup()
 }
 
-func (a *api) GetV1Group() fiber.Router {
-	return a.app.Group("/v1")
+func (a *api) GetRootRouter() fiber.Router {
+	return a.app.Group("/v1").Use(middlewares.AuthMiddleware)
+}
+
+func (a *api) NewRouteGroup(path string) fiber.Router {
+	return a.GetRootRouter().Group(path)
 }
 
 func (a *api) RegisterUtilRoutes() {

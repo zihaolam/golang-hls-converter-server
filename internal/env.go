@@ -17,7 +17,7 @@ type envVars struct {
 	OpenAIApiKey           string
 	VideoPlatformApiKey    string
 	VideoPlatformServerUrl string
-	NatsUrl                string
+	SecretKey              string
 }
 
 func newEnvVars() *envVars {
@@ -39,7 +39,7 @@ func newEnvVars() *envVars {
 		OpenAIApiKey:           envFile["OPENAI_API_KEY"],
 		VideoPlatformApiKey:    envFile["VIDEO_PLATFORM_API_KEY"],
 		VideoPlatformServerUrl: envFile["VIDEO_PLATFORM_SERVER_URL"],
-		NatsUrl:                envFile["NATS_URL"],
+		SecretKey:              envFile["SECRET_KEY"],
 	}
 
 	return &config

@@ -1,9 +1,8 @@
 package middlewares
 
 import (
-	"strings"
-
 	"github.com/gofiber/fiber/v2"
+	"github.com/zihaolam/golang-media-upload-server/internal"
 )
 
 func AuthMiddleware(c *fiber.Ctx) error {
@@ -17,7 +16,7 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	}
 
 	// Check if the value of the Authorization header is not "Bearer <your_token>"
-	if authToken != strings.Replace(authToken, "Bearer ", "", 1) {
+	if authToken != internal.Env.SecretKey {
 		// Return 401 Unauthorized
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}

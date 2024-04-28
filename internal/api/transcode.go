@@ -36,7 +36,7 @@ func NewTranscodeApi(a *api) *transcodeApi {
 const JOB_ID_PARAM = "jobId"
 
 func (ta *transcodeApi) Setup() {
-	transcodeApiGroup := ta.api.GetV1Group().Group("/transcode")
+	transcodeApiGroup := ta.api.NewRouteGroup("/transcode")
 	transcodeApiGroup.Post("/video", ta.handleVideoTranscode())
 	transcodeApiGroup.Post(fmt.Sprintf("/job/:%s", JOB_ID_PARAM), ta.handleVideoTranscodeJob())
 	transcodeApiGroup.Post("/image", ta.handleImageTranscode())
