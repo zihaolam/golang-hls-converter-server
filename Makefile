@@ -15,7 +15,7 @@ run: build
 	./$(BINARY_NAME)
 
 dev:
-	air --build.cmd "$(GO) build -o $(BINARY_NAME) cmd/app/main.go" --build.bin "$(BINARY_NAME)"
+	air --build.cmd "$(GO) build --race -o $(BINARY_NAME) cmd/app/main.go" --build.bin "$(BINARY_NAME)"
 
 clean:
 	rm -f $(BINARY_NAME)

@@ -2,7 +2,6 @@ package fileutils
 
 import (
 	"fmt"
-	"mime/multipart"
 	"os"
 	"path/filepath"
 
@@ -10,7 +9,14 @@ import (
 	"github.com/google/uuid"
 )
 
-func SaveFileFromCtxToDir(c *fiber.Ctx, file *multipart.FileHeader, dir string) (string, error) {
+func SaveFileFromCtxToDir(c *fiber.Ctx, formFileKey, dir string) (string, error) {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return "", err
+	}
+
+	file := form.File[formFileKey][0]
+
 	randomFileName := fmt.Sprintf("%s%s", uuid.New().String(), filepath.Ext(file.Filename))
 
 	storedTempFileName := fmt.Sprintf("%s/%s", dir, randomFileName)

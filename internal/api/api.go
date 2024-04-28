@@ -59,8 +59,8 @@ func (a *api) RegisterRoutes() {
 
 	transcodeApi := NewTranscodeApi(a)
 	transcribeApi := NewTranscribeApi(a)
-	transcodeApi.RegisterRoutes()
-	transcribeApi.RegisterRoutes()
+	transcodeApi.Setup()
+	transcribeApi.Setup()
 }
 
 func (a *api) GetV1Group() fiber.Router {

@@ -1,6 +1,7 @@
 package mediautils
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -171,6 +172,7 @@ func getUploadedS3HLSMasterDirectory(masterPlaylistFileName, tmpDir string) stri
 	return internal.Env.PublicAssetEndpoint + strings.Replace(masterPlaylistFileName, tmpDir, "", 1)
 }
 
+// transcodes video to hls and uploads to s3 bucket
 func TranscodeVideoToHLS(videoFilename, tmpDir string) (string, error) {
 	fileOutputDirLeaf := uuid.New().String()
 	fileOutputDir := filepath.Join(tmpDir, fileOutputDirLeaf)
@@ -205,8 +207,9 @@ func TranscodeVideoToHLS(videoFilename, tmpDir string) (string, error) {
 
 func UploadTranscodedSegmentsToS3(directory, directoryPrefix, newDirPrefix string) error {
 	s3Client := s3.NewS3Client()
+	ctx := context.Context(context.Background())
 	replaceHLSSegmentsBasePath(directory, directoryPrefix, newDirPrefix)
-	return s3Client.UploadDirectory(directory)
+	return s3Client.UploadDirectory(ctx, directory)
 }
 
 func ExtractAudio(videoFileName string) (*string, error) {
