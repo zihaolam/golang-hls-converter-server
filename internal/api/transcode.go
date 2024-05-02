@@ -156,15 +156,15 @@ func (ta *transcodeApi) runTranscodeJob(js *job.JobService, j job.Job) error {
 	ctx := context.Context(context.Background())
 	s3Client := s3.NewS3Client()
 
-	file, err := s3Client.GetObject(ctx, j.VideoUrl)
-	if err != nil {
-		go js.SendJobProcessingFailedWebhook(j.Id, err)
+	if j.Status != "pending" {
+		err := fmt.Errorf("job status has started")
 		log.Println(err)
 		return err
 	}
 
-	if j.Status != "pending" {
-		err = fmt.Errorf("job status has started")
+	file, err := s3Client.GetObject(ctx, j.VideoUrl)
+	if err != nil {
+		go js.SendJobProcessingFailedWebhook(j.Id, err)
 		log.Println(err)
 		return err
 	}
