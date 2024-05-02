@@ -158,6 +158,7 @@ func (ta *transcodeApi) runTranscodeJob(js *job.JobService, j job.Job) error {
 
 	file, err := s3Client.GetObject(ctx, j.VideoUrl)
 	if err != nil {
+		go js.SendJobProcessingFailedWebhook(j.Id, err)
 		log.Println(err)
 		return err
 	}
@@ -175,6 +176,7 @@ func (ta *transcodeApi) runTranscodeJob(js *job.JobService, j job.Job) error {
 	data, err := ffprobe.GetProbeData(file.Name(), 120000*time.Millisecond)
 
 	if err != nil {
+		go js.SendJobProcessingFailedWebhook(j.Id, err)
 		log.Println(err)
 		return err
 	}
@@ -182,6 +184,7 @@ func (ta *transcodeApi) runTranscodeJob(js *job.JobService, j job.Job) error {
 	tmpDir, err := os.MkdirTemp("", uuid.NewString())
 
 	if err != nil {
+		go js.SendJobProcessingFailedWebhook(j.Id, err)
 		log.Println(err)
 		return err
 	}
@@ -239,6 +242,7 @@ func (ta *transcodeApi) runTranscodeJob(js *job.JobService, j job.Job) error {
 	}(&wg)
 
 	for err := range errCh {
+		go js.SendJobProcessingFailedWebhook(j.Id, err)
 		log.Println(err)
 		return err
 	}
@@ -254,7 +258,8 @@ func (ta *transcodeApi) runTranscodeJob(js *job.JobService, j job.Job) error {
 	}, subtitleTracks...)
 
 	if len(errs) > 0 {
-		log.Println(err)
+		go js.SendJobProcessingFailedWebhook(j.Id, errs[0])
+		log.Println(errs[0])
 		return err
 	}
 
