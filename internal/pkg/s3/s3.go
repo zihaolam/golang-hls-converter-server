@@ -28,7 +28,6 @@ func newConfig() *aws.Config {
 	return &aws.Config{
 		Credentials: credentials.NewStaticCredentials(internal.Env.AwsAccessKey, internal.Env.AwsSecretKey, ""),
 		Region:      aws.String(internal.Env.AwsRegion),
-		Endpoint:    aws.String(internal.Env.S3Endpoint),
 	}
 }
 
