@@ -19,3 +19,6 @@ dev:
 
 clean:
 	rm -f $(BINARY_NAME)
+
+run-background: build
+	./$(BINARY_NAME) & echo $$! > .pid
