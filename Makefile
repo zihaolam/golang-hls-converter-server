@@ -22,3 +22,6 @@ clean:
 
 run-background: build
 	./$(BINARY_NAME) & echo $$! > .pid
+
+shutdown: 
+	kill -9 `cat .pid` && rm .pid
